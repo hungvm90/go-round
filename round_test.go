@@ -9,14 +9,19 @@ import (
 )
 
 type TestCase struct {
-	Input string `json:"input"`
-	Up string `json:"up"`
-	Down string `json:"down"`
-	Ceiling string `json:"ceiling"`
-	Floor string `json:"floor"`
-	HalfUp string `json:"halfUp"`
+	Input    string `json:"input"`
+	Up       string `json:"up"`
+	Down     string `json:"down"`
+	Ceiling  string `json:"ceiling"`
+	Floor    string `json:"floor"`
+	HalfUp   string `json:"halfUp"`
 	HalfDown string `json:"halfDown"`
 	HalfEven string `json:"halfEven"`
+}
+
+func TestRound2(t *testing.T) {
+	require.Equal(t, -0.14, Round(-0.14, 2, UP))
+	require.Equal(t, 0.1425, Round(0.1425, 4, DOWN))
 }
 
 func TestRound(t *testing.T) {
@@ -35,7 +40,7 @@ func TestRound(t *testing.T) {
 		halfUp, _ := strconv.ParseFloat(tc.HalfUp, 64)
 		halfDown, _ := strconv.ParseFloat(tc.HalfDown, 64)
 		halfEven, _ := strconv.ParseFloat(tc.HalfEven, 64)
-		require.NoError(t, err, "fail to parse " + tc.Input)
+		require.NoError(t, err, "fail to parse "+tc.Input)
 		require.Equal(t, up, Round(input, 1, UP), tc.Input)
 		require.Equal(t, down, Round(input, 1, DOWN), tc.Input)
 		require.Equal(t, ceiling, Round(input, 1, CEILING), tc.Input)
