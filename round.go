@@ -83,8 +83,6 @@ func roundFloor(value float64, scale uint) float64 {
 
 func roundHalfUp(value float64, scale uint) float64 {
 	return round(value, scale, math.Round)
-	//factor := math.Pow(10, float64(scale))
-	//return math.Round(precisionScale(value, factor)) / factor
 }
 
 func roundHalfDown(value float64, scale uint) float64 {
@@ -107,13 +105,4 @@ func roundHalfDown(value float64, scale uint) float64 {
 
 func roundHalfEven(value float64, scale uint) float64 {
 	return round(value, scale, math.RoundToEven)
-}
-
-func precisionScale(value float64, factor float64) float64 {
-	f := new(big.Float).SetFloat64(factor)
-	v := new(big.Float).SetFloat64(value)
-	t := new(big.Float)
-	t.Mul(v, f)
-	x, _ := strconv.ParseFloat(fmt.Sprintf("%f", t), 64)
-	return x
 }
