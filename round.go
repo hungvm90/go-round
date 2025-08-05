@@ -49,48 +49,64 @@ func roundUp(value float64, scale uint) float64 {
 		sign = -1
 	}
 	value = math.Abs(value)
-	factor := math.Pow(10, float64(scale))
-	return sign * math.Ceil(precisionScale(value, factor)) / factor
+	result := round(value, scale, math.Ceil)
+	if sign > 0 {
+		return result
+	} else {
+		return -result
+	}
+}
+
+func round(value float64, scale uint, fn func(x float64) float64) float64 {
+	factor := new(big.Float).SetPrec(64).SetFloat64(math.Pow10(int(scale)))
+	f := new(big.Float).SetPrec(64).SetFloat64(value)
+	f.Mul(f, factor)
+	t, _ := strconv.ParseFloat(fmt.Sprintf("%f", f), 64)
+	t = fn(t)
+	f.SetFloat64(t)
+	f.Quo(f, factor)
+	result, _ := strconv.ParseFloat(fmt.Sprintf("%f", f), 64)
+	return result
 }
 
 func roundDown(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	return math.Trunc(precisionScale(value, factor)) / factor
+	return round(value, scale, math.Trunc)
 }
 
 func roundCeiling(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	return math.Ceil(precisionScale(value, factor)) / factor
+	return round(value, scale, math.Ceil)
 }
 
 func roundFloor(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	return math.Floor(precisionScale(value, factor)) / factor
+	return round(value, scale, math.Floor)
 }
 
 func roundHalfUp(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	return math.Round(precisionScale(value, factor)) / factor
+	return round(value, scale, math.Round)
+	//factor := math.Pow(10, float64(scale))
+	//return math.Round(precisionScale(value, factor)) / factor
 }
 
 func roundHalfDown(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	temp := precisionScale(value, factor)
-	_, div := math.Modf(temp)
+	factor := new(big.Float).SetPrec(64).SetFloat64(math.Pow10(int(scale)))
+	f := new(big.Float).SetPrec(64).SetFloat64(value)
+	f.Mul(f, factor)
+	t, _ := strconv.ParseFloat(fmt.Sprintf("%f", f), 64)
+	_, div := math.Modf(t)
 	if math.Abs(div) <= 0.5 {
-		temp = math.Trunc(temp)
-	}
-	if value > 0 {
-		return math.Round(temp) / factor
+		t = math.Trunc(t)
 	} else {
-		return math.Round(temp) / factor
+		t = math.Round(t)
 	}
+	f.SetFloat64(t)
+	f.Quo(f, factor)
+	result, _ := strconv.ParseFloat(fmt.Sprintf("%f", f), 64)
+	return result
 
 }
 
 func roundHalfEven(value float64, scale uint) float64 {
-	factor := math.Pow(10, float64(scale))
-	return math.RoundToEven(precisionScale(value, factor)) / factor
+	return round(value, scale, math.RoundToEven)
 }
 
 func precisionScale(value float64, factor float64) float64 {

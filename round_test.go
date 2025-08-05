@@ -2,10 +2,12 @@ package round
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/stretchr/testify/require"
 	"os"
 	"strconv"
 	"testing"
+	"time"
 )
 
 type TestCase struct {
@@ -22,6 +24,10 @@ type TestCase struct {
 func TestRound(t *testing.T) {
 	require.Equal(t, -0.14, Round(-0.14, 2, UP))
 	require.Equal(t, 0.1425, Round(0.1425, 4, DOWN))
+	require.Equal(t, -2.0, Round(-1.9999, 2, UP))
+	require.Equal(t, -1.99, Round(-1.9999, 2, DOWN))
+	require.Equal(t, -1.28, Round(-1.2750, 2, HALF_UP))
+	require.Equal(t, -1.99, Round(-1.9892, 2, HALF_DOWN))
 }
 
 func TestRound1(t *testing.T) {
@@ -58,6 +64,8 @@ func TestRound2(t *testing.T) {
 	err = json.Unmarshal(dat, &testcases)
 	require.NoError(t, err)
 	require.Equal(t, -0.9, Round(-0.95, 1, HALF_DOWN))
+	fmt.Printf("%v\n", len(testcases))
+	fmt.Printf("%v\n", time.Now())
 	for _, tc := range testcases {
 		input, _ := strconv.ParseFloat(tc.Input, 64)
 		up, _ := strconv.ParseFloat(tc.Up, 64)
@@ -76,4 +84,5 @@ func TestRound2(t *testing.T) {
 		require.Equal(t, halfDown, Round(input, 2, HALF_DOWN), tc.Input)
 		require.Equal(t, halfEven, Round(input, 2, HALF_EVEN), tc.Input)
 	}
+	fmt.Printf("%v\n", time.Now())
 }
